@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <title>Blue Map Philippines</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      body { 
+        margin: 0; 
+        padding: 0; 
+      }
+
+      #map { 
+        position: absolute; 
+        top: 0; 
+        bottom: 0; 
+        width: 100%; 
+      }
+    </style>
+  </head>
+  <body>
+    <div id='map'></div>
+    <script>
+    // The value for 'accessToken' begins with 'pk...'
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZGF3bml2YSIsImEiOiJjbHJ1NXNybWUwZG93MmtvYmY3OTRxODd2In0.IBqsqmumiX_weM4JqO7ldw'; 
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/dawniva/clru62df6006301q29vzub0qg'
+    });
+    map.on('load', function () {
+      map.addSource('MangroveExtent1', {
+        type: 'geojson',
+        // Use a URL for the value for the `data` property.
+        data: 'https://github.com/dawniva/BlueMap/blob/main/phmang3.geojson'
+      });
+
+      map.addLayer({
+        id: 'Mangrove-Extent1',
+        type: 'fill',
+        source: 'MangroveExtent1',
+      });
+    });
+    /* 
+//Add an event listener that runs
+  when a user clicks on the map element.
+*/
+map.on('click', (event) => {
+  // If the user clicked on one of your markers, get its information.
+  const features = map.queryRenderedFeatures(event.point, {
+    layers: ['blue-map-data-1-3bi9dw'] // replace with your layer name
+  });
+  if (!features.length) {
+    return;
+  }
+  const feature = features[0];
+
+  /* 
+    Create a popup, specify its options 
+    and properties, and add it to the map.
+  */
+const popup = new mapboxgl.Popup({ offset: [0, -15] })
+  .setLngLat(feature.geometry.coordinates)
+  .setHTML(
+    `<h3>${feature.properties.SiteName}</h3><p> Mangrove Area (ha): ${feature.properties.Mangrove_Area}</p>`
+  )
+  .addTo(map);
+});
+
+
+
+    </script>
+  </body>
+</html>
